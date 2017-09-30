@@ -20,11 +20,24 @@ const list = [
 ]
 
 class App extends Component {
+  constructor(props) {
+    super(props)
+    // this.state = {
+    //   list: list
+    // }
+
+    // es6
+    // when the property name in your object is the same as your variable name
+    this.state = {
+      list
+    }
+  }
+
   render() {
     return (
       <div className="App">
         {
-          list.map((item) => {
+          this.state.list.map((item) => {
             {/* don't use index of array as key because isn't stable */}
             return (
               <div key={item.objectID}>
@@ -44,3 +57,32 @@ class App extends Component {
 }
 
 export default App;
+
+
+
+// // ES5
+// var userService = {
+//   getUserName: function (user) {
+//     return user.firstname + ' ' + user.lastnamne
+//   }
+// }
+
+// var user = {
+//   name: 'Robin'
+// }
+
+// // ES6
+
+// const userService = {
+//   getUsername(user) {
+//     return user.firstname + ' ' + user.lastnamne
+//   }
+// }
+
+// const key = 'name'
+// const user = {
+//   [key]: 'Robin'
+// }
+
+
+
