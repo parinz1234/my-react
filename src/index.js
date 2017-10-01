@@ -6,6 +6,7 @@ if (module.hot){
   module.hot.accept()
 }
 
-const tick = () => ReactDOM.render(<App />, document.getElementById('root'))
+// const tick = () => ReactDOM.render(<App />, document.getElementById('root'))
 
-setInterval(tick, 1000)
+// setInterval(tick, 1000)
+ReactDOM.render(<App />, document.getElementById('root'))
