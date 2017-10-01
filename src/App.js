@@ -19,13 +19,20 @@ const list = [
   },
 ]
 
+
+const isSearched = searchTerm => item => !searchTerm || item.title.toLowerCase().includes(searchTerm.toLowerCase())
+
+
 class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      list
+      list,
+      searchTerm: ''
     }
     this.onDismiss = this.handleDismiss.bind(this)
+
+    this.onSearchChange = this.handleOnSearch.bind(this)
   }
 
   handleDismiss (id) {
@@ -41,12 +48,24 @@ class App extends Component {
     this.setState({  list: updatedList })
   }
 
+  handleOnSearch (e) {
+    this.setState({
+      searchTerm: e.target.value
+    })
+  }
   render() {
-    const { list } = this.state
+    const { list, searchTerm } = this.state
     return (
       <div className="App">
+        <form>
+          <input 
+            type="text"
+            onChange={this.onSearchChange}
+            value={searchTerm}
+            />
+        </form>
         {
-          list.map((item) => {
+          list.filter(isSearched(searchTerm)).map((item) => {
             {/* don't use index of array as key because isn't stable */}
             return (
               <div key={item.objectID}>
