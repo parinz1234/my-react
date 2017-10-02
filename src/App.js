@@ -1,38 +1,67 @@
 import React, { Component } from 'react';
 
-const list = [
-  {
-    title: 'React',
-    url: 'https://facebook.github.io/react/',
-    author: 'Jordan Walke',
-    num_comments: 3,
-    points: 4,
-    objectID: 0,
-  },
-  {
-    title: 'Redux',
-    url: 'https://github.com/reactjs/redux',
-    author: 'Dan Abramov, Andrew Clark',
-    num_comments: 2,
-    points: 5,
-    objectID: 1,
-  },
-]
-
+const DEFAULT_QUERY = 'redux'
+const PATH_BASE = 'https://hn.algolia.com/api/v1'
+const PATH_SEARCH = '/search'
+const PARAM_SEARCH = 'query='
 
 const isSearched = searchTerm => item => !searchTerm || item.title.toLowerCase().includes(searchTerm.toLowerCase())
+
+
+/*
+  mounting process lifecycle
+
+  (first)
+  1.constructor
+
+  2.componentWillMount()
+  4.componentDidMount()
+
+  (was called when component was updated)
+  3.render()
+
+  update lifecycle
+
+  componentWillReceiveProps()
+  shouldComponentUpdate()
+  componentWillUpdate()
+  render()
+  componentDidUpdate()
+
+
+  unmounting lifecycle
+  componentWillUnmount()
+*/
 
 
 class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      list,
-      searchTerm: ''
+      result: null,
+      searchTerm: DEFAULT_QUERY
     }
-    this.onDismiss = this.handleDismiss.bind(this)
 
+    this.setSearchTopstories = this.setSearchTopstories.bind(this)
+    this.fetchSearchTopstories = this.fetchSearchTopstories.bind(this)
+    this.onDismiss = this.handleDismiss.bind(this)
     this.onSearchChange = this.handleOnSearch.bind(this)
+  }
+
+  componentDidMount () {
+    const { searchTerm } = this.state
+    this.fetchSearchTopstories(searchTerm)
+  }
+
+  setSearchTopstories (result) {
+    this.setState({ result })
+  }
+
+  fetchSearchTopstories (searchTerm) {
+    fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}`)
+      .then(response => response.json())
+      .then(result => this.setSearchTopstories(result))
+      .catch(e => e);
   }
 
   handleDismiss (id) {
@@ -44,8 +73,11 @@ class App extends Component {
     // ES6
     const isNotId = item => item.objectID !== id
 
-    const updatedList = this.state.list.filter(isNotId)
-    this.setState({  list: updatedList })
+    const updatedList = this.state.result.hits.filter(isNotId)
+    // ES5
+    // this.setState({  result: Object.assign({}, this.state.result, { hits: updatedList }) })
+    // ES6 Spread
+    this.setState({ result: { ...this.state.result, hits: updatedList } })
   }
 
   handleOnSearch (e) {
@@ -53,8 +85,12 @@ class App extends Component {
       searchTerm: e.target.value
     })
   }
+  
   render() {
-    const { list, searchTerm } = this.state
+    const { result, searchTerm } = this.state
+
+    if (!result) { return null }
+
     return (
       <div className="App">
         <Search
@@ -64,7 +100,7 @@ class App extends Component {
           Search
         </Search>
         <Table
-          list={list}
+          list={result.hits}
           searchTerm={searchTerm}
           onDismiss={this.onDismiss}
           />
