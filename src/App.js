@@ -89,7 +89,6 @@ class App extends Component {
   render() {
     const { result, searchTerm } = this.state
 
-    if (!result) { return null }
 
     return (
       <div className="App">
@@ -99,15 +98,27 @@ class App extends Component {
           >
           Search
         </Search>
-        <Table
+        {
+          result &&
+          <Table
           list={result.hits}
           searchTerm={searchTerm}
           onDismiss={this.onDismiss}
           />
+        }
       </div>
     );
   }
 }
+
+// const result = true && 'Hello World'
+// console.log(result)
+//  'Hello World'
+
+// const result = false && 'Hello World'
+// console.log(result)
+// false
+
 
 // search
 const Search = ({ value, onChange, children }) =>
