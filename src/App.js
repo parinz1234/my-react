@@ -46,6 +46,7 @@ class App extends Component {
     this.fetchSearchTopstories = this.fetchSearchTopstories.bind(this)
     this.onDismiss = this.handleDismiss.bind(this)
     this.onSearchChange = this.handleOnSearch.bind(this)
+    this.onSearchSubmit = this.onSearchSubmit.bind(this)
   }
 
   componentDidMount () {
@@ -86,6 +87,12 @@ class App extends Component {
     })
   }
   
+  onSearchSubmit (e) {
+    e.preventDefault()
+    const { searchTerm } = this.state
+    this.fetchSearchTopstories(searchTerm)
+  }
+
   render() {
     const { result, searchTerm } = this.state
 
@@ -95,6 +102,7 @@ class App extends Component {
         <Search
           value={searchTerm}
           onChange={this.onSearchChange}
+          onSubmit={this.onSearchSubmit}
           >
           Search
         </Search>
@@ -102,7 +110,6 @@ class App extends Component {
           result &&
           <Table
           list={result.hits}
-          searchTerm={searchTerm}
           onDismiss={this.onDismiss}
           />
         }
@@ -121,23 +128,26 @@ class App extends Component {
 
 
 // search
-const Search = ({ value, onChange, children }) =>
-  <form>
+const Search = ({ value, onChange, onSubmit, children }) =>
+  <form onSubmit={onSubmit}>
     {children}
     <input 
       type="text"
       onChange={onChange}
       value={value}
       />
+    <button type="submit">
+      {children}
+    </button>
   </form>
 
 
 
 // table
-const Table = ({ list, searchTerm, onDismiss }) =>
+const Table = ({ list, onDismiss }) =>
   <div>
     {
-      list.filter(isSearched(searchTerm)).map((item) => {
+      list.map((item) => {
         return (
           <div key={item.objectID}>
             <span>
