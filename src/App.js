@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types'
+
 
 const DEFAULT_QUERY = 'redux'
 const PATH_BASE = 'https://hn.algolia.com/api/v1'
@@ -10,7 +12,7 @@ const PARAM_PAGE = 'page='
 const DEFAULT_HPP = '100'
 const PARAM_HPP = 'hitsPerPage='
 
-const isSearched = searchTerm => item => !searchTerm || item.title.toLowerCase().includes(searchTerm.toLowerCase())
+// const isSearched = searchTerm => item => !searchTerm || item.title.toLowerCase().includes(searchTerm.toLowerCase())
 
 
 /*
@@ -210,10 +212,24 @@ const Table = ({ list, onDismiss }) =>
     }
   </div>
 
+Table.propTypes = {
+  list: PropTypes.arrayOf(
+    PropTypes.shape({
+      objectID: PropTypes.string.isRequired,
+      author: PropTypes.string,
+      url: PropTypes.string,
+      num_comments: PropTypes.number,
+      points: PropTypes.number
+    })
+  ).isRequired,
+  onDismiss: PropTypes.func.isRequired
+}
+
+
 // BUtton
 class Button extends Component {
   render () {
-    const { onClick, className = '', children } = this.props
+    const { onClick, className, children } = this.props
     return (
       <button
         onClick={onClick}
@@ -225,5 +241,28 @@ class Button extends Component {
     )
   }
 }
+
+Button.propTypes = {
+  onClick: PropTypes.func.isRequired,
+  className: PropTypes.string,
+  children: PropTypes.node.isRequired
+}
+
+Button.defaultProps = {
+  className: ''
+}
+
+/*
+  PropTypes.array
+  PropTypes.bool
+  PropTypes.func
+  PropTypes.number
+  PropTypes.object
+  PropTypes.string
+
+  PropTypes.node
+  PropTypes.element
+*/
+
 
 export default App;
