@@ -264,5 +264,11 @@ Button.defaultProps = {
   PropTypes.element
 */
 
+export {
+  Button,
+  Search,
+  Table
+}
+
 
 export default App;
