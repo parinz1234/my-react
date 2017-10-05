@@ -175,20 +175,50 @@ class App extends Component {
 
 
 // search
-const Search = ({ value, onChange, onSubmit, children }) =>
-  <form onSubmit={onSubmit}>
-    {children}
-    <input 
-      type="text"
-      onChange={onChange}
-      value={value}
-      />
-    <button type="submit">
+// ref in ES6 class
+// class Search extends Component {
+
+//   componentDidMount() {
+//     this.input.focus();
+//   }
+
+//   render () {
+//     const { value, onChange, onSubmit, children } = this.props
+//     return (
+//       <form onSubmit={onSubmit}>
+//         {children}
+//         <input 
+//           type="text"
+//           onChange={onChange}
+//           value={value}
+//           ref={(node) => { this.input = node; }}
+//           />
+//         <button type="submit">
+//           {children}
+//         </button>
+//       </form>
+//     )
+//   }
+// }
+
+const Search = ({ value, onChange, onSubmit, children }) => {
+  let input;
+  return (
+    <form onSubmit={onSubmit}>
       {children}
-    </button>
-  </form>
-
-
+      <input 
+        type="text"
+        onChange={onChange}
+        value={value}
+        ref={(node) => { input = node; }}
+        />
+      <button type="submit">
+        {children}
+      </button>
+    </form>
+  )
+}
+  
 
 // table
 const Table = ({ list, onDismiss }) =>
