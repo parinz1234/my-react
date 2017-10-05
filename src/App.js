@@ -12,34 +12,6 @@ const PARAM_PAGE = 'page='
 const DEFAULT_HPP = '100'
 const PARAM_HPP = 'hitsPerPage='
 
-// const isSearched = searchTerm => item => !searchTerm || item.title.toLowerCase().includes(searchTerm.toLowerCase())
-
-
-/*
-  mounting process lifecycle
-
-  (first)
-  1.constructor
-
-  2.componentWillMount()
-  4.componentDidMount()
-
-  (was called when component was updated)
-  3.render()
-
-  update lifecycle
-
-  componentWillReceiveProps()
-  shouldComponentUpdate()
-  componentWillUpdate()
-  render()
-  componentDidUpdate()
-
-
-  unmounting lifecycle
-  componentWillUnmount()
-*/
-
 
 class App extends Component {
   constructor(props) {
@@ -47,7 +19,8 @@ class App extends Component {
     this.state = {
       results: null,
       searchKey: '',
-      searchTerm: DEFAULT_QUERY
+      searchTerm: DEFAULT_QUERY,
+      isLoading: false
     }
 
     this.setSearchTopstories = this.setSearchTopstories.bind(this)
@@ -80,11 +53,13 @@ class App extends Component {
       results: {
         ...results,
         [searchKey]: { hits: updatedHits, page }
-      }
+      },
+      isLoading: false
     })
   }
 
   fetchSearchTopstories (searchTerm, page) {
+    this.setState({ isLoading: true })
     fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}&${PARAM_PAGE}${page}&${PARAM_HPP}${DEFAULT_HPP}`)
       .then(response => response.json())
       .then(result => this.setSearchTopstories(result))
@@ -92,10 +67,6 @@ class App extends Component {
   }
 
   handleDismiss (id) {
-    // console.log(id)
-    // function isNotId(item) {
-    //   return item.objectID !== id
-    // }
 
     // ES6
     const isNotId = item => item.objectID !== id
@@ -124,7 +95,8 @@ class App extends Component {
     const {
       searchTerm,
       results,
-      searchKey
+      searchKey,
+      isLoading
     } = this.state
 
     const page = (
@@ -156,50 +128,19 @@ class App extends Component {
           />
         }
         <div className="interactions">
-          <button onClick={() => this.fetchSearchTopstories(searchKey, page + 1)}>
-            More
-          </button>
+          {
+            isLoading
+            ? <Loading />
+            : <ButtonWithLoading onClick={() => this.fetchSearchTopstories(searchKey, page + 1)}>
+                More
+              </ButtonWithLoading>
+          }
+          
         </div>
       </div>
     );
   }
 }
-
-// const result = true && 'Hello World'
-// console.log(result)
-//  'Hello World'
-
-// const result = false && 'Hello World'
-// console.log(result)
-// false
-
-
-// search
-// ref in ES6 class
-// class Search extends Component {
-
-//   componentDidMount() {
-//     this.input.focus();
-//   }
-
-//   render () {
-//     const { value, onChange, onSubmit, children } = this.props
-//     return (
-//       <form onSubmit={onSubmit}>
-//         {children}
-//         <input 
-//           type="text"
-//           onChange={onChange}
-//           value={value}
-//           ref={(node) => { this.input = node; }}
-//           />
-//         <button type="submit">
-//           {children}
-//         </button>
-//       </form>
-//     )
-//   }
-// }
 
 const Search = ({ value, onChange, onSubmit, children }) => {
   let input;
@@ -272,6 +213,13 @@ class Button extends Component {
   }
 }
 
+const withLoading = (Component) => ({isLoading, ...rest}) =>
+  isLoading ? <Loading /> : <Component {...rest} />
+
+
+const Loading = () =>
+  <div>Loading...</div>
+
 Button.propTypes = {
   onClick: PropTypes.func.isRequired,
   className: PropTypes.string,
@@ -282,17 +230,20 @@ Button.defaultProps = {
   className: ''
 }
 
-/*
-  PropTypes.array
-  PropTypes.bool
-  PropTypes.func
-  PropTypes.number
-  PropTypes.object
-  PropTypes.string
 
-  PropTypes.node
-  PropTypes.element
-*/
-
+const ButtonWithLoading = withLoading(Button)
 
 export default App;
+
+
+// HOC
+// function withFool (Component) {
+//   return function (props) {
+//     return <Component {...prop} />;
+//   }
+// }
+
+// ES6
+
+// const withFool = (Component) => (props) =>
+//   <Component {...props} />
